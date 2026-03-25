@@ -30,27 +30,30 @@ const movieApi = {
     },
 
     /**
-     * Get now showing movies
-     * @returns {Promise} - API response
+     * Get now showing movies with pagination
+     * @param {number} page
+     * @param {number} size
      */
-    getNowShowing: () => {
-        return axiosClient.get('/movies/now-showing');
+    getNowShowing: (page = 0, size = 12) => {
+        return axiosClient.get('/movies/now-showing', { params: { page, size } });
     },
 
     /**
-     * Get coming soon movies
-     * @returns {Promise} - API response
+     * Get coming soon movies with pagination
+     * @param {number} page
+     * @param {number} size
      */
-    getComingSoon: () => {
-        return axiosClient.get('/movies/coming-soon');
+    getComingSoon: (page = 0, size = 12) => {
+        return axiosClient.get('/movies/coming-soon', { params: { page, size } });
     },
 
     /**
-     * Get featured movies
-     * @returns {Promise} - API response
+     * Get featured movies (falls back gracefully if endpoint missing)
      */
     getFeaturedMovies: () => {
-        return axiosClient.get('/movies/featured');
+        return axiosClient.get('/movies/featured').catch(() =>
+            axiosClient.get('/movies/now-showing', { params: { page: 0, size: 5 } })
+        );
     },
 
     /**
@@ -83,6 +86,22 @@ const movieApi = {
         };
         return axiosClient.get(`/movies/genre/${genreId}`, { params });
     },
+
+    // ===== Admin endpoints =====
+    createMovie: (data) =>
+        axiosClient.post('/admin/movies', data),
+
+    updateMovie: (id, data) =>
+        axiosClient.put(`/admin/movies/${id}`, data),
+
+    deleteMovie: (id) =>
+        axiosClient.delete(`/admin/movies/${id}`),
+
+    restoreMovie: (id) =>
+        axiosClient.patch(`/admin/movies/${id}/restore`),
+
+    getAllMoviesAdmin: (page = 0, size = 10) =>
+        axiosClient.get('/admin/movies', { params: { page, size } }),
 };
 
 export default movieApi;
