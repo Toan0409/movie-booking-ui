@@ -13,7 +13,7 @@ const ActorsPage = () => {
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
-    const [form, setForm] = useState({ name: '', biography: '', birthDate: '', nationality: '', profileImageUrl: '' });
+    const [form, setForm] = useState({ name: '', biography: '', birthDate: '', nationality: '', imageUrl: '' });
 
     useEffect(() => {
         fetchActors();
@@ -42,10 +42,10 @@ const ActorsPage = () => {
                 biography: actor.biography || '',
                 birthDate: actor.birthDate || '',
                 nationality: actor.nationality || '',
-                profileImageUrl: actor.profileImageUrl || '',
+                imageUrl: actor.imageUrl || '',
             });
         } else {
-            setForm({ name: '', biography: '', birthDate: '', nationality: '', profileImageUrl: '' });
+            setForm({ name: '', biography: '', birthDate: '', nationality: '', imageUrl: '' });
         }
         setShowModal(true);
     };
@@ -53,8 +53,10 @@ const ActorsPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            console.log("editingActor =", editingActor);
+            console.log("editingActor.id =", editingActor?.id);
             if (editingActor) {
-                await actorApi.updateActor(editingActor.actorId, form);
+                await actorApi.updateActor(editingActor.id, form);
             } else {
                 await actorApi.createActor(form);
             }
@@ -117,12 +119,12 @@ const ActorsPage = () => {
                                     ) : actors.length === 0 ? (
                                         <tr><td colSpan={4} className="px-4 py-12 text-center text-slate-400">Không có diễn viên nào</td></tr>
                                     ) : actors.map((actor) => (
-                                        <tr key={actor.actorId} className="hover:bg-white/5 transition-colors">
+                                        <tr key={actor.id} className="hover:bg-white/5 transition-colors">
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-9 h-9 rounded-full overflow-hidden bg-white/10 shrink-0">
-                                                        {actor.profileImageUrl ? (
-                                                            <img src={actor.profileImageUrl} alt={actor.name} className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
+                                                        {actor.imageUrl ? (
+                                                            <img src={actor.imageUrl} alt={actor.name} className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold text-sm">
                                                                 {actor.name?.charAt(0)?.toUpperCase()}
@@ -142,7 +144,7 @@ const ActorsPage = () => {
                                                     <button onClick={() => openModal(actor)} className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
                                                         <Edit className="w-4 h-4" />
                                                     </button>
-                                                    <button onClick={() => setDeleteConfirm(actor.actorId)} className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-red-400 transition-colors">
+                                                    <button onClick={() => setDeleteConfirm(actor.id)} className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-red-400 transition-colors">
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
                                                 </div>
@@ -188,7 +190,7 @@ const ActorsPage = () => {
                             </div>
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">URL ảnh đại diện</label>
-                                <input value={form.profileImageUrl} onChange={e => setForm({ ...form, profileImageUrl: e.target.value })} placeholder="https://..." className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none" />
+                                <input value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })} placeholder="https://..." className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none" />
                             </div>
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">Tiểu sử</label>
