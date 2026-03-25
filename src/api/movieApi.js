@@ -89,19 +89,19 @@ const movieApi = {
 
     // ===== Admin endpoints =====
     createMovie: (data) =>
-        axiosClient.post('/admin/movies', data),
+        axiosClient.post('/movies', data),
 
     updateMovie: (id, data) =>
-        axiosClient.put(`/admin/movies/${id}`, data),
+        axiosClient.put(`/movies/${id}`, data),
 
     deleteMovie: (id) =>
-        axiosClient.delete(`/admin/movies/${id}`),
+        axiosClient.delete(`/movies/${id}`),
 
     restoreMovie: (id) =>
-        axiosClient.patch(`/admin/movies/${id}/restore`),
+        axiosClient.patch(`/movies/${id}/restore`),
 
     getAllMoviesAdmin: (page = 0, size = 10) =>
-        axiosClient.get('/admin/movies', { params: { page, size } }),
+        axiosClient.get('/movies', { params: { page, size } }),
 };
 
 export default movieApi;

@@ -73,6 +73,13 @@ const MoviesPage = () => {
         }
     };
 
+    // Hàm chuyển boolean flags từ response → status string cho form
+    const deriveStatus = (movie) => {
+        if (movie.isNowShowing) return 'NOW_SHOWING';
+        if (movie.isComingSoon) return 'COMING_SOON';
+        return 'ENDED';
+    };
+
     const openModal = (movie = null) => {
         setEditingMovie(movie);
         if (movie) {
@@ -83,9 +90,9 @@ const MoviesPage = () => {
                 duration: movie.duration || '',
                 releaseDate: movie.releaseDate || '',
                 ageRating: movie.ageRating || 'P',
-                status: movie.status || 'NOW_SHOWING',
+                status: deriveStatus(movie),
                 posterUrl: movie.posterUrl || '',
-                backdropUrl: movie.backdropUrl || '',
+                backdropUrl: '',
                 trailerUrl: movie.trailerUrl || '',
                 genreId: movie.genre?.genreId || '',
                 directorId: movie.director?.directorId || '',
@@ -106,11 +113,21 @@ const MoviesPage = () => {
         e.preventDefault();
         try {
             const payload = {
-                ...form,
+                title: form.title,
+                originalTitle: form.originalTitle || undefined,
+                description: form.description || undefined,
                 duration: form.duration ? parseInt(form.duration) : undefined,
+                releaseDate: form.releaseDate || undefined,
+                ageRating: form.ageRating || undefined,
+                posterUrl: form.posterUrl || undefined,
+                trailerUrl: form.trailerUrl || undefined,
                 rating: form.rating ? parseFloat(form.rating) : undefined,
                 genreId: form.genreId ? parseInt(form.genreId) : undefined,
                 directorId: form.directorId ? parseInt(form.directorId) : undefined,
+                // Chuyển status string → boolean flags theo backend DTO
+                isNowShowing: form.status === 'NOW_SHOWING',
+                isComingSoon: form.status === 'COMING_SOON',
+                isFeatured: false,
             };
             if (editingMovie) {
                 await movieApi.updateMovie(editingMovie.movieId, payload);

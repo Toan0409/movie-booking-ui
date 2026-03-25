@@ -13,7 +13,7 @@ const DirectorsPage = () => {
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
-    const [form, setForm] = useState({ name: '', biography: '', birthDate: '', nationality: '', profileImageUrl: '' });
+    const [form, setForm] = useState({ name: '', biography: '', birthDate: '', nationality: '', imageUrl: '' });
 
     useEffect(() => {
         fetchDirectors();
@@ -42,10 +42,10 @@ const DirectorsPage = () => {
                 biography: director.biography || '',
                 birthDate: director.birthDate || '',
                 nationality: director.nationality || '',
-                profileImageUrl: director.profileImageUrl || '',
+                imageUrl: director.imageUrl || '',
             });
         } else {
-            setForm({ name: '', biography: '', birthDate: '', nationality: '', profileImageUrl: '' });
+            setForm({ name: '', biography: '', birthDate: '', nationality: '', imageUrl: '' });
         }
         setShowModal(true);
     };
@@ -53,6 +53,15 @@ const DirectorsPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const payload = {
+                name: form.name.trim(),
+                biography: form.biography || null,
+                birthDate: form.birthDate || null,      // ← "" → null
+                nationality: form.nationality || null,
+                imageUrl: form.imageUrl || null,
+            };
+
+            console.log('Payload gửi lên:', payload); // Debug
             if (editingDirector) {
                 await directorApi.updateDirector(editingDirector.directorId, form);
             } else {
@@ -121,8 +130,8 @@ const DirectorsPage = () => {
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-9 h-9 rounded-full overflow-hidden bg-white/10 shrink-0">
-                                                        {director.profileImageUrl ? (
-                                                            <img src={director.profileImageUrl} alt={director.name} className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
+                                                        {director.imageUrl ? (
+                                                            <img src={director.imageUrl} alt={director.name} className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none'; }} />
                                                         ) : (
                                                             <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold text-sm">
                                                                 {director.name?.charAt(0)?.toUpperCase()}
@@ -188,7 +197,7 @@ const DirectorsPage = () => {
                             </div>
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">URL ảnh đại diện</label>
-                                <input value={form.profileImageUrl} onChange={e => setForm({ ...form, profileImageUrl: e.target.value })} placeholder="https://..." className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none" />
+                                <input value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })} placeholder="https://..." className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none" />
                             </div>
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">Tiểu sử</label>
