@@ -6,10 +6,8 @@ import { useAuth } from '../context/AuthContext';
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [form, setForm] = useState({
-        firstName: '',
-        lastName: '',
+        username: '',
         email: '',
-        phone: '',
         password: '',
         confirmPassword: '',
         agree: false,
@@ -27,11 +25,10 @@ const RegisterPage = () => {
     };
 
     const validate = () => {
-        if (!form.firstName.trim()) return 'Vui lòng nhập họ';
-        if (!form.lastName.trim()) return 'Vui lòng nhập tên';
+        if (!form.username.trim()) return 'Vui lòng nhập tên đăng nhập';
+        if (form.username.trim().length < 3) return 'Tên đăng nhập phải có ít nhất 3 ký tự';
         if (!form.email.trim()) return 'Vui lòng nhập email';
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return 'Email không hợp lệ';
-        if (!form.phone.trim()) return 'Vui lòng nhập số điện thoại';
         if (form.password.length < 6) return 'Mật khẩu phải có ít nhất 6 ký tự';
         if (form.password !== form.confirmPassword) return 'Mật khẩu xác nhận không khớp';
         if (!form.agree) return 'Vui lòng đồng ý với điều khoản dịch vụ';
@@ -52,14 +49,12 @@ const RegisterPage = () => {
         setLoading(true);
         try {
             await register({
-                firstName: form.firstName.trim(),
-                lastName: form.lastName.trim(),
+                username: form.username.trim(),
                 email: form.email.trim(),
-                phone: form.phone.trim(),
                 password: form.password,
             });
-            setSuccess('Đăng ký thành công! Đang chuyển hướng...');
-            setTimeout(() => navigate('/'), 1500);
+            setSuccess('Đăng ký thành công! Vui lòng đăng nhập.');
+            setTimeout(() => navigate('/login'), 1500);
         } catch (err) {
             const msg =
                 err.response?.data?.message ||
@@ -105,29 +100,17 @@ const RegisterPage = () => {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="text-slate-400 text-sm block mb-2">Họ</label>
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={form.firstName}
-                                    onChange={handleChange}
-                                    placeholder="Nguyễn"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-primary outline-none transition-all"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-slate-400 text-sm block mb-2">Tên</label>
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    value={form.lastName}
-                                    onChange={handleChange}
-                                    placeholder="Văn A"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-primary outline-none transition-all"
-                                />
-                            </div>
+                        <div>
+                            <label className="text-slate-400 text-sm block mb-2">Tên đăng nhập</label>
+                            <input
+                                type="text"
+                                name="username"
+                                value={form.username}
+                                onChange={handleChange}
+                                placeholder="Tên đăng nhập (ít nhất 3 ký tự)"
+                                autoComplete="username"
+                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-primary outline-none transition-all"
+                            />
                         </div>
 
                         <div>
@@ -139,18 +122,6 @@ const RegisterPage = () => {
                                 onChange={handleChange}
                                 placeholder="email@example.com"
                                 autoComplete="email"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-primary outline-none transition-all"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="text-slate-400 text-sm block mb-2">Số điện thoại</label>
-                            <input
-                                type="tel"
-                                name="phone"
-                                value={form.phone}
-                                onChange={handleChange}
-                                placeholder="090xxxxxxx"
                                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-primary outline-none transition-all"
                             />
                         </div>

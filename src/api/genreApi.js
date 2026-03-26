@@ -4,8 +4,11 @@ const genreApi = {
     getAllGenres: (keyword = '', page = 0, size = 10) =>
         axiosClient.get('/admin/genres', { params: { keyword, page, size } }),
 
+    getAllGenresClient: (keyword = '', page = 0, size = 10) =>
+        axiosClient.get('/genres', { params: { keyword, page, size } }),
+
     getGenreById: (id) =>
-        axiosClient.get(`/admin/genres/${id}`),
+        axiosClient.get(`/genres/${id}`),
 
     createGenre: (data) =>
         axiosClient.post('/admin/genres', data),

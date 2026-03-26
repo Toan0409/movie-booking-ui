@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import userApi from '../api/userApi';
+import authApi from '../api/authApi';
 
 const AuthContext = createContext(null);
 
@@ -9,12 +9,13 @@ export const AuthProvider = ({ children }) => {
 
     // Load user from localStorage on mount
     useEffect(() => {
-        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('token');
         const userData = localStorage.getItem('userData');
-        if (userId && userData) {
+        if (token && userData) {
             try {
                 setUser(JSON.parse(userData));
             } catch {
+                localStorage.removeItem('token');
                 localStorage.removeItem('userId');
                 localStorage.removeItem('userData');
             }
@@ -23,50 +24,35 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     /**
-     * Login: fetch users and match by email (demo approach - no JWT)
+     * Login: gọi POST /api/auth/login, nhận JWT token
      */
-    const login = async (email, password) => {
-        if (!email || !password) throw new Error('Vui lòng nhập email và mật khẩu');
+    const login = async (usernameOrEmail, password) => {
+        if (!usernameOrEmail || !password) throw new Error('Vui lòng nhập email và mật khẩu');
 
-        // Fetch a large page to find user by email
-        const res = await userApi.getAllUsers(0, 200);
-        const pageData = res.data?.data || res.data;
-        const users = pageData?.content || (Array.isArray(pageData) ? pageData : []);
+        const res = await authApi.login({ usernameOrEmail, password });
+        const authData = res.data?.data || res.data;
 
-        const foundUser = users.find(
-            (u) => u.email?.toLowerCase() === email.toLowerCase()
-        );
+        // authData: { accessToken, tokenType, userId, username, email, fullName, role }
+        const { accessToken, userId, username, email, fullName, role } = authData;
 
-        if (!foundUser) {
-            throw new Error('Email không tồn tại trong hệ thống');
-        }
+        const userData = { userId, username, email, fullName, role };
 
-        // Store in localStorage
-        localStorage.setItem('userId', String(foundUser.userId));
-        localStorage.setItem('userData', JSON.stringify(foundUser));
-        setUser(foundUser);
-        return foundUser;
+        // Lưu token và thông tin user vào localStorage
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('userId', String(userId));
+        localStorage.setItem('userData', JSON.stringify(userData));
+        setUser(userData);
+        return userData;
     };
 
     /**
-     * Register: create new user via API
+     * Register: gọi POST /api/auth/register
      */
-    const register = async ({ firstName, lastName, email, phone, password }) => {
-        const payload = {
-            fullName: `${firstName} ${lastName}`.trim(),
-            email,
-            phone,
-            password,
-        };
-
-        const res = await userApi.createUser(payload);
+    const register = async ({ username, email, password }) => {
+        const res = await authApi.register({ username, email, password });
         const newUser = res.data?.data || res.data;
-
-        if (newUser?.userId) {
-            localStorage.setItem('userId', String(newUser.userId));
-            localStorage.setItem('userData', JSON.stringify(newUser));
-            setUser(newUser);
-        }
+        // Sau khi đăng ký thành công, không tự động đăng nhập
+        // Người dùng sẽ được chuyển hướng đến trang đăng nhập
         return newUser;
     };
 
@@ -74,6 +60,7 @@ export const AuthProvider = ({ children }) => {
      * Logout: clear localStorage and state
      */
     const logout = () => {
+        localStorage.removeItem('token');
         localStorage.removeItem('userId');
         localStorage.removeItem('userData');
         setUser(null);

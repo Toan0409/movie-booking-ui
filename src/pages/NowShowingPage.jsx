@@ -85,7 +85,7 @@ const NowShowingPage = () => {
 
     // Fetch genres for filter
     useEffect(() => {
-        genreApi.getAllGenres?.()
+        genreApi.getAllGenresClient?.()
             .then((res) => {
                 const data = res.data?.data?.content || res.data?.data || res.data || [];
                 setGenres(Array.isArray(data) ? data : []);
@@ -268,8 +268,8 @@ const NowShowingPage = () => {
                                             key={i}
                                             onClick={() => goToPage(i)}
                                             className={`w-10 h-10 rounded-xl text-sm font-bold transition-all ${i === page
-                                                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                                                    : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10'
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                                : 'bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10'
                                                 }`}
                                         >
                                             {i + 1}
