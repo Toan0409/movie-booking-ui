@@ -4,7 +4,7 @@ import Sidebar from '../../components/admin/Sidebar';
 import Header from '../../components/admin/Header';
 import userApi from '../../api/userApi';
 
-const ROLES = ['USER', 'ADMIN'];
+const ROLES = ['ADMIN', 'STAFF', 'CUSTOMER'];
 
 const UsersPage = () => {
     const [users, setUsers] = useState([]);
@@ -15,8 +15,9 @@ const UsersPage = () => {
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
+    const [formError, setFormError] = useState('');
     const [form, setForm] = useState({
-        fullName: '', email: '', phone: '', password: '', role: 'USER'
+        username: '', fullName: '', email: '', phone: '', password: '', role: 'CUSTOMER'
     });
 
     useEffect(() => {
@@ -50,22 +51,44 @@ const UsersPage = () => {
 
     const openModal = (user = null) => {
         setEditingUser(user);
+        setFormError('');
         if (user) {
             setForm({
+                username: user.username || '',
                 fullName: user.fullName || '',
                 email: user.email || '',
                 phone: user.phone || '',
                 password: '',
-                role: user.role || 'USER',
+                role: user.role || 'CUSTOMER',
             });
         } else {
-            setForm({ fullName: '', email: '', phone: '', password: '', role: 'USER' });
+            setForm({ username: '', fullName: '', email: '', phone: '', password: '', role: 'CUSTOMER' });
         }
         setShowModal(true);
     };
 
+    const validateForm = () => {
+        if (!editingUser) {
+            // Validate username only on create
+            if (!form.username.trim()) return 'Vui lòng nhập username';
+            if (form.username.trim().length < 3) return 'Username phải có ít nhất 3 ký tự';
+            if (/\s/.test(form.username)) return 'Username không được chứa khoảng trắng';
+        }
+        if (!form.email.trim()) return 'Vui lòng nhập email';
+        if (!editingUser && !form.password.trim()) return 'Vui lòng nhập mật khẩu';
+        return null;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setFormError('');
+
+        const validationError = validateForm();
+        if (validationError) {
+            setFormError(validationError);
+            return;
+        }
+
         try {
             const payload = { ...form };
             if (editingUser && !payload.password) delete payload.password;
@@ -77,7 +100,15 @@ const UsersPage = () => {
             setShowModal(false);
             fetchUsers();
         } catch (err) {
-            alert(err.response?.data?.message || 'Có lỗi xảy ra');
+            const serverMsg = err.response?.data?.message || 'Có lỗi xảy ra';
+            if (
+                serverMsg.toLowerCase().includes('username') &&
+                (serverMsg.toLowerCase().includes('exist') || serverMsg.toLowerCase().includes('tồn tại') || serverMsg.toLowerCase().includes('da ton tai'))
+            ) {
+                setFormError('Username này đã tồn tại. Vui lòng chọn username khác.');
+            } else {
+                setFormError(serverMsg);
+            }
         }
     };
 
@@ -109,6 +140,7 @@ const UsersPage = () => {
         const q = search.toLowerCase();
         return u.fullName?.toLowerCase().includes(q) ||
             u.email?.toLowerCase().includes(q) ||
+            u.username?.toLowerCase().includes(q) ||
             u.phone?.includes(q);
     });
 
@@ -166,9 +198,12 @@ const UsersPage = () => {
                                             <td className="px-4 py-3">
                                                 <div className="flex items-center gap-3">
                                                     <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm shrink-0">
-                                                        {user.fullName?.charAt(0)?.toUpperCase() || 'U'}
+                                                        {user.fullName?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
                                                     </div>
-                                                    <p className="text-white font-medium text-sm">{user.fullName}</p>
+                                                    <div>
+                                                        <p className="text-white font-medium text-sm">{user.fullName || '—'}</p>
+                                                        <p className="text-slate-500 text-xs">@{user.username}</p>
+                                                    </div>
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3 text-slate-300 text-sm">{user.email}</td>
@@ -227,9 +262,38 @@ const UsersPage = () => {
                             </button>
                         </div>
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                            {/* Form-level error */}
+                            {formError && (
+                                <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
+                                    <span className="text-red-400 text-xs mt-0.5">⚠</span>
+                                    <p className="text-red-400 text-xs">{formError}</p>
+                                </div>
+                            )}
                             <div>
-                                <label className="text-slate-400 text-sm block mb-1">Họ tên *</label>
-                                <input value={form.fullName} onChange={e => setForm({ ...form, fullName: e.target.value })} required placeholder="Nguyễn Văn A" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none" />
+                                <label className="text-slate-400 text-sm block mb-1">
+                                    Username {!editingUser && <span className="text-red-400">*</span>}
+                                </label>
+                                <input
+                                    value={form.username}
+                                    onChange={e => setForm({ ...form, username: e.target.value })}
+                                    required={!editingUser}
+                                    disabled={!!editingUser}
+                                    placeholder="Enter username"
+                                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none transition-all ${editingUser
+                                            ? 'bg-white/[0.03] border-white/5 text-slate-500 cursor-not-allowed'
+                                            : 'bg-white/5 border-white/10 text-white'
+                                        }`}
+                                />
+                                {editingUser && (
+                                    <p className="text-slate-600 text-xs mt-1">Username không thể thay đổi sau khi tạo</p>
+                                )}
+                                {!editingUser && (
+                                    <p className="text-slate-600 text-xs mt-1">Ít nhất 3 ký tự, không chứa khoảng trắng</p>
+                                )}
+                            </div>
+                            <div>
+                                <label className="text-slate-400 text-sm block mb-1">Họ tên</label>
+                                <input value={form.fullName} onChange={e => setForm({ ...form, fullName: e.target.value })} placeholder="Nguyễn Văn A" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none" />
                             </div>
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">Email *</label>

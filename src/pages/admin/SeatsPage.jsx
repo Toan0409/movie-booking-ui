@@ -49,7 +49,7 @@ const SeatsPage = () => {
             const res = await theaterApi.getAllTheaters(0, 100);
             if (res.data?.success) {
                 const all = res.data.data.content || [];
-                setTheaters(all.filter(t => t.cinema?.cinemaId === parseInt(cinemaId)));
+                setTheaters(all.filter(t => t.cinemaId === parseInt(cinemaId)));
             }
         } catch (err) {
             console.error(err);
@@ -144,7 +144,7 @@ const SeatsPage = () => {
                                 <select
                                     value={selectedCinema}
                                     onChange={e => setSelectedCinema(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-slate-600 text-sm focus:ring-2 focus:ring-primary outline-none"
                                 >
                                     <option value="">-- Chọn rạp --</option>
                                     {cinemas.map(c => <option key={c.cinemaId} value={c.cinemaId}>{c.name}</option>)}
@@ -156,7 +156,7 @@ const SeatsPage = () => {
                                     value={selectedTheater}
                                     onChange={e => setSelectedTheater(e.target.value)}
                                     disabled={!selectedCinema}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none disabled:opacity-50"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-slate-600 text-sm focus:ring-2 focus:ring-primary outline-none disabled:opacity-50"
                                 >
                                     <option value="">-- Chọn phòng --</option>
                                     {theaters.map(t => <option key={t.theaterId} value={t.theaterId}>{t.name} ({t.theaterType})</option>)}

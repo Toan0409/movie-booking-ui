@@ -25,8 +25,9 @@ const RegisterPage = () => {
     };
 
     const validate = () => {
-        if (!form.username.trim()) return 'Vui lòng nhập tên đăng nhập';
-        if (form.username.trim().length < 3) return 'Tên đăng nhập phải có ít nhất 3 ký tự';
+        if (!form.username.trim()) return 'Vui lòng nhập username';
+        if (form.username.trim().length < 3) return 'Username phải có ít nhất 3 ký tự';
+        if (/\s/.test(form.username)) return 'Username không được chứa khoảng trắng';
         if (!form.email.trim()) return 'Vui lòng nhập email';
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) return 'Email không hợp lệ';
         if (form.password.length < 6) return 'Mật khẩu phải có ít nhất 6 ký tự';
@@ -56,12 +57,21 @@ const RegisterPage = () => {
             setSuccess('Đăng ký thành công! Vui lòng đăng nhập.');
             setTimeout(() => navigate('/login'), 1500);
         } catch (err) {
-            const msg =
+            const serverMsg =
                 err.response?.data?.message ||
+                err.response?.data?.data?.username ||
                 err.response?.data?.data?.email ||
                 err.message ||
-                'Đăng ký thất bại. Vui lòng thử lại.';
-            setError(msg);
+                '';
+            // Hiển thị lỗi rõ ràng khi username đã tồn tại
+            if (
+                serverMsg.toLowerCase().includes('username') &&
+                (serverMsg.toLowerCase().includes('exist') || serverMsg.toLowerCase().includes('tồn tại') || serverMsg.toLowerCase().includes('da ton tai'))
+            ) {
+                setError('Username này đã được sử dụng. Vui lòng chọn username khác.');
+            } else {
+                setError(serverMsg || 'Đăng ký thất bại. Vui lòng thử lại.');
+            }
         } finally {
             setLoading(false);
         }
@@ -101,16 +111,19 @@ const RegisterPage = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="text-slate-400 text-sm block mb-2">Tên đăng nhập</label>
+                            <label className="text-slate-400 text-sm block mb-2">
+                                Username <span className="text-red-400">*</span>
+                            </label>
                             <input
                                 type="text"
                                 name="username"
                                 value={form.username}
                                 onChange={handleChange}
-                                placeholder="Tên đăng nhập (ít nhất 3 ký tự)"
+                                placeholder="Enter username"
                                 autoComplete="username"
                                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-primary outline-none transition-all"
                             />
+                            <p className="text-slate-500 text-xs mt-1">Ít nhất 3 ký tự, không chứa khoảng trắng</p>
                         </div>
 
                         <div>

@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState('');
+    const [usernameOrEmail, setUsernameOrEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -21,8 +21,8 @@ const LoginPage = () => {
         e.preventDefault();
         setError('');
 
-        if (!email.trim()) {
-            setError('Vui lòng nhập email');
+        if (!usernameOrEmail.trim()) {
+            setError('Vui lòng nhập username hoặc email');
             return;
         }
         if (!password.trim()) {
@@ -32,7 +32,7 @@ const LoginPage = () => {
 
         setLoading(true);
         try {
-            await login(email.trim(), password);
+            await login(usernameOrEmail.trim(), password);
             navigate(from, { replace: true });
         } catch (err) {
             setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
@@ -67,13 +67,13 @@ const LoginPage = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="text-slate-400 text-sm block mb-2">Email</label>
+                            <label className="text-slate-400 text-sm block mb-2">Username hoặc Email</label>
                             <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="email@example.com"
-                                autoComplete="email"
+                                type="text"
+                                value={usernameOrEmail}
+                                onChange={(e) => setUsernameOrEmail(e.target.value)}
+                                placeholder="Nhập username hoặc email"
+                                autoComplete="username"
                                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:ring-2 focus:ring-primary outline-none transition-all"
                             />
                         </div>
