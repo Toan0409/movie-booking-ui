@@ -253,9 +253,14 @@ const MoviesPage = () => {
                                                 ) : <span className="text-slate-500">—</span>}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <span className={`text-xs font-bold px-2 py-1 rounded-lg border ${STATUS_BADGE[movie.status] || STATUS_BADGE.ENDED}`}>
-                                                    {STATUS_LABEL[movie.status] || movie.status}
-                                                </span>
+                                                {(() => {
+                                                    const status = deriveStatus(movie);
+                                                    return (
+                                                        <span className={`text-xs font-bold px-2 py-1 rounded-lg border ${STATUS_BADGE[status]}`}>
+                                                            {STATUS_LABEL[status]}
+                                                        </span>
+                                                    );
+                                                })()}
                                             </td>
                                             <td className="px-4 py-3 text-right">
                                                 <div className="flex items-center justify-end gap-2">

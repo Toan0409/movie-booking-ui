@@ -17,7 +17,7 @@ const TheatersPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [form, setForm] = useState({
-        name: '', cinemaId: '', totalRows: '', seatsPerRow: '', theaterType: 'STANDARD'
+        name: '', cinemaId: '', rowsCount: '', seatsPerRow: '', theaterType: 'STANDARD'
     });
 
     useEffect(() => {
@@ -55,12 +55,12 @@ const TheatersPage = () => {
             setForm({
                 name: theater.name || '',
                 cinemaId: theater.cinema?.cinemaId || '',
-                totalRows: theater.totalRows || '',
+                rowsCount: theater.rowsCount || '',
                 seatsPerRow: theater.seatsPerRow || '',
                 theaterType: theater.theaterType || 'STANDARD',
             });
         } else {
-            setForm({ name: '', cinemaId: '', totalRows: '', seatsPerRow: '', theaterType: 'STANDARD' });
+            setForm({ name: '', cinemaId: '', rowsCount: '', seatsPerRow: '', theaterType: 'STANDARD' });
         }
         setShowModal(true);
     };
@@ -71,7 +71,7 @@ const TheatersPage = () => {
             const payload = {
                 name: form.name,
                 cinemaId: parseInt(form.cinemaId),
-                totalRows: parseInt(form.totalRows),
+                rowsCount: parseInt(form.rowsCount),
                 seatsPerRow: parseInt(form.seatsPerRow),
                 theaterType: form.theaterType,
             };
@@ -157,14 +157,14 @@ const TheatersPage = () => {
                                             <td className="px-4 py-3">
                                                 <p className="text-white font-medium">{theater.name}</p>
                                             </td>
-                                            <td className="px-4 py-3 text-slate-300 text-sm">{theater.cinema?.name}</td>
+                                            <td className="px-4 py-3 text-slate-300 text-sm">{theater.cinemaName}</td>
                                             <td className="px-4 py-3">
                                                 <span className={`px-2 py-1 rounded-full text-xs font-bold ${getTypeColor(theater.theaterType)}`}>
                                                     {theater.theaterType}
                                                 </span>
                                             </td>
                                             <td className="px-4 py-3 text-slate-300 text-sm">
-                                                {theater.totalRows} hàng × {theater.seatsPerRow} ghế = <span className="text-white font-medium">{theater.totalRows * theater.seatsPerRow}</span>
+                                                {theater.rowsCount} hàng × {theater.seatsPerRow} ghế = <span className="text-white font-medium">{theater.rowsCount * theater.seatsPerRow}</span>
                                             </td>
                                             <td className="px-4 py-3">
                                                 <span className={`px-2 py-1 rounded-full text-xs font-bold ${theater.isActive !== false ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
@@ -235,15 +235,15 @@ const TheatersPage = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="text-slate-400 text-sm block mb-1">Số hàng *</label>
-                                    <input type="number" value={form.totalRows} onChange={e => setForm({ ...form, totalRows: e.target.value })} required min="1" max="26" placeholder="10" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none" />
+                                    <input type="number" value={form.rowsCount} onChange={e => setForm({ ...form, rowsCount: e.target.value })} required min="1" max="26" placeholder="10" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none" />
                                 </div>
                                 <div>
                                     <label className="text-slate-400 text-sm block mb-1">Ghế/hàng *</label>
                                     <input type="number" value={form.seatsPerRow} onChange={e => setForm({ ...form, seatsPerRow: e.target.value })} required min="1" placeholder="12" className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none" />
                                 </div>
                             </div>
-                            {form.totalRows && form.seatsPerRow && (
-                                <p className="text-slate-400 text-xs">Tổng sức chứa: <span className="text-white font-bold">{form.totalRows * form.seatsPerRow} ghế</span></p>
+                            {form.rowsCount && form.seatsPerRow && (
+                                <p className="text-slate-400 text-xs">Tổng sức chứa: <span className="text-white font-bold">{form.rowsCount * form.seatsPerRow} ghế</span></p>
                             )}
                             <div className="flex gap-3 pt-2">
                                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-2 rounded-lg border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition-all">Hủy</button>
