@@ -180,12 +180,12 @@ const UsersPage = () => {
                             <table className="w-full text-left">
                                 <thead className="bg-white/5 border-b border-white/10">
                                     <tr>
-                                        <th className="px-4 py-3 text-xs font-bold uppercase text-slate-400">Người dùng</th>
-                                        <th className="px-4 py-3 text-xs font-bold uppercase text-slate-400">Email</th>
-                                        <th className="px-4 py-3 text-xs font-bold uppercase text-slate-400">Số điện thoại</th>
-                                        <th className="px-4 py-3 text-xs font-bold uppercase text-slate-400">Vai trò</th>
-                                        <th className="px-4 py-3 text-xs font-bold uppercase text-slate-400">Trạng thái</th>
-                                        <th className="px-4 py-3 text-xs font-bold uppercase text-slate-400 text-right">Thao tác</th>
+                                        <th className="px-4 py-3 text-xs font-bold uppercase text-white">Người dùng</th>
+                                        <th className="px-4 py-3 text-xs font-bold uppercase text-white">Email</th>
+                                        <th className="px-4 py-3 text-xs font-bold uppercase text-white">Số điện thoại</th>
+                                        <th className="px-4 py-3 text-xs font-bold uppercase text-white">Vai trò</th>
+                                        <th className="px-4 py-3 text-xs font-bold uppercase text-white">Trạng thái</th>
+                                        <th className="px-4 py-3 text-xs font-bold uppercase text-white text-right">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-white/5">
@@ -280,8 +280,8 @@ const UsersPage = () => {
                                     disabled={!!editingUser}
                                     placeholder="Enter username"
                                     className={`w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary outline-none transition-all ${editingUser
-                                            ? 'bg-white/[0.03] border-white/5 text-slate-500 cursor-not-allowed'
-                                            : 'bg-white/5 border-white/10 text-white'
+                                        ? 'bg-white/[0.03] border-white/5 text-slate-500 cursor-not-allowed'
+                                        : 'bg-white/5 border-white/10 text-white'
                                         }`}
                                 />
                                 {editingUser && (
@@ -311,7 +311,7 @@ const UsersPage = () => {
                             </div>
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">Vai trò</label>
-                                <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
+                                <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} className="w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
                                     {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
                                 </select>
                             </div>

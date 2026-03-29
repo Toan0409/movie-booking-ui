@@ -92,7 +92,7 @@ const RevenueChart = () => {
                 <select
                     value={range}
                     onChange={e => { setRange(Number(e.target.value)); setLoading(true); }}
-                    className="bg-white/10 border border-white/20 rounded-xl text-xs font-semibold py-2 px-3 outline-none text-white"
+                    className="bg-slate-800 border border-white/20 rounded-xl text-xs font-semibold py-2 px-3 outline-none text-white"
                 >
                     <option value={7}>7 ngày</option>
                     <option value={14}>14 ngày</option>

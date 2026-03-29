@@ -104,7 +104,7 @@ const BookingsPage = () => {
                         <select
                             value={statusFilter}
                             onChange={e => setStatusFilter(e.target.value)}
-                            className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none"
+                            className="bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none"
                         >
                             <option value="">Tất cả trạng thái</option>
                             <option value="CONFIRMED">Đã xác nhận</option>

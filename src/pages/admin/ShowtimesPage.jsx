@@ -209,14 +209,14 @@ const ShowtimesPage = () => {
                         <form onSubmit={handleSubmit} className="p-6 space-y-4">
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">Phim *</label>
-                                <select value={form.movieId} onChange={e => setForm({ ...form, movieId: e.target.value })} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
+                                <select value={form.movieId} onChange={e => setForm({ ...form, movieId: e.target.value })} required className="w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
                                     <option value="">Chọn phim</option>
                                     {movies.map(m => <option key={m.movieId} value={m.movieId}>{m.title}</option>)}
                                 </select>
                             </div>
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">Phòng chiếu *</label>
-                                <select value={form.theaterId} onChange={e => setForm({ ...form, theaterId: e.target.value })} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
+                                <select value={form.theaterId} onChange={e => setForm({ ...form, theaterId: e.target.value })} required className="w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
                                     <option value="">Chọn phòng chiếu</option>
                                     {theaters.map(t => <option key={t.theaterId} value={t.theaterId}>{t.name} ({t.theaterType})</option>)}
                                 </select>

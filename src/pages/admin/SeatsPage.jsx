@@ -140,23 +140,23 @@ const SeatsPage = () => {
                     <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                         <div className="flex flex-wrap gap-4 items-end">
                             <div className="flex-1 min-w-[200px]">
-                                <label className="text-slate-400 text-xs block mb-1">Chọn rạp</label>
+                                <label className="text-white text-xs block mb-1">Chọn rạp</label>
                                 <select
                                     value={selectedCinema}
                                     onChange={e => setSelectedCinema(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-slate-600 text-sm focus:ring-2 focus:ring-primary outline-none"
+                                    className="w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none"
                                 >
                                     <option value="">-- Chọn rạp --</option>
                                     {cinemas.map(c => <option key={c.cinemaId} value={c.cinemaId}>{c.name}</option>)}
                                 </select>
                             </div>
                             <div className="flex-1 min-w-[200px]">
-                                <label className="text-slate-400 text-xs block mb-1">Chọn phòng chiếu</label>
+                                <label className="text-white text-xs block mb-1">Chọn phòng chiếu</label>
                                 <select
                                     value={selectedTheater}
                                     onChange={e => setSelectedTheater(e.target.value)}
                                     disabled={!selectedCinema}
-                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-slate-600 text-sm focus:ring-2 focus:ring-primary outline-none disabled:opacity-50"
+                                    className="w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none disabled:opacity-50"
                                 >
                                     <option value="">-- Chọn phòng --</option>
                                     {theaters.map(t => <option key={t.theaterId} value={t.theaterId}>{t.name} ({t.theaterType})</option>)}

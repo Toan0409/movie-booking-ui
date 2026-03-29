@@ -163,7 +163,8 @@ const MoviesPage = () => {
     };
 
     const inputCls = "w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none";
-    const labelCls = "text-slate-400 text-xs block mb-1";
+    const labelCls = "text-slate-300 text-xs block mb-1";
+    const selectCls = "w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none";
 
     return (
         <div className="flex min-h-screen bg-[#0b1220] text-white">
@@ -320,26 +321,26 @@ const MoviesPage = () => {
                                 </div>
                                 <div>
                                     <label className={labelCls}>Giới hạn tuổi</label>
-                                    <select value={form.ageRating} onChange={e => setForm({ ...form, ageRating: e.target.value })} className={inputCls}>
-                                        {AGE_RATINGS.map(r => <option key={r} value={r}>{r}</option>)}
+                                    <select value={form.ageRating} onChange={e => setForm({ ...form, ageRating: e.target.value })} className={selectCls}>
+                                        {AGE_RATINGS.map(r => <option className='' key={r} value={r}>{r}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className={labelCls}>Trạng thái</label>
-                                    <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className={inputCls}>
+                                    <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} className={selectCls}>
                                         {STATUS_OPTIONS.map(s => <option key={s} value={s}>{STATUS_LABEL[s]}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className={labelCls}>Thể loại</label>
-                                    <select value={form.genreId} onChange={e => setForm({ ...form, genreId: e.target.value })} className={inputCls}>
+                                    <select value={form.genreId} onChange={e => setForm({ ...form, genreId: e.target.value })} className={selectCls}>
                                         <option value="">-- Chọn thể loại --</option>
                                         {genres.map(g => <option key={g.genreId} value={g.genreId}>{g.name}</option>)}
                                     </select>
                                 </div>
                                 <div>
                                     <label className={labelCls}>Đạo diễn</label>
-                                    <select value={form.directorId} onChange={e => setForm({ ...form, directorId: e.target.value })} className={inputCls}>
+                                    <select value={form.directorId} onChange={e => setForm({ ...form, directorId: e.target.value })} className={selectCls}>
                                         <option value="">-- Chọn đạo diễn --</option>
                                         {directors.map(d => <option key={d.directorId} value={d.directorId}>{d.name}</option>)}
                                     </select>

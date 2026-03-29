@@ -5,7 +5,7 @@ import Header from '../../components/admin/Header';
 import theaterApi from '../../api/theaterApi';
 import cinemaApi from '../../api/cinemaApi';
 
-const THEATER_TYPES = ['STANDARD', 'IMAX', 'DOLBY', '4DX', 'VIP'];
+const THEATER_TYPES = ['STANDARD', 'IMAX', 'FOUR_DX', 'VIP'];
 
 const TheatersPage = () => {
     const [theaters, setTheaters] = useState([]);
@@ -110,7 +110,7 @@ const TheatersPage = () => {
         const colors = {
             IMAX: 'bg-blue-500/20 text-blue-400',
             DOLBY: 'bg-purple-500/20 text-purple-400',
-            '4DX': 'bg-orange-500/20 text-orange-400',
+            FOUR_DX: 'bg-orange-500/20 text-orange-400',
             VIP: 'bg-amber-500/20 text-amber-400',
             STANDARD: 'bg-slate-500/20 text-slate-400',
         };
@@ -221,14 +221,14 @@ const TheatersPage = () => {
                             </div>
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">Rạp chiếu *</label>
-                                <select value={form.cinemaId} onChange={e => setForm({ ...form, cinemaId: e.target.value })} required className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
+                                <select value={form.cinemaId} onChange={e => setForm({ ...form, cinemaId: e.target.value })} required className="w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
                                     <option value="">Chọn rạp</option>
                                     {cinemas.map(c => <option key={c.cinemaId} value={c.cinemaId}>{c.name} - {c.city}</option>)}
                                 </select>
                             </div>
                             <div>
                                 <label className="text-slate-400 text-sm block mb-1">Loại phòng *</label>
-                                <select value={form.theaterType} onChange={e => setForm({ ...form, theaterType: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
+                                <select value={form.theaterType} onChange={e => setForm({ ...form, theaterType: e.target.value })} className="w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none">
                                     {THEATER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
                                 </select>
                             </div>

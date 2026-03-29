@@ -21,7 +21,9 @@ const TodayOverview = () => {
 
                 // Fetch today's showtimes
                 const showtimesRes = await showtimeApi.getAllShowtimes(0, 200);
-                const allShowtimes = showtimesRes?.data?.content || showtimesRes?.data || [];
+                const allShowtimes = showtimesRes?.data.data.content || showtimesRes?.data || [];
+                console.log("showtimesRes:", showtimesRes);
+                console.log("showtimesRes.data:", showtimesRes?.data);
                 const todayShowtimes = allShowtimes.filter(s => {
                     const st = s.startTime || s.showDate;
                     return st && st.startsWith(today);
