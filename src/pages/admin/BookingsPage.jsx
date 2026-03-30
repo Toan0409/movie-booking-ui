@@ -5,11 +5,20 @@ import Header from '../../components/admin/Header';
 import bookingApi from '../../api/bookingApi';
 
 const STATUS_COLORS = {
-    CONFIRMED: 'bg-green-500/20 text-green-400',
+    PAID: 'bg-green-500/20 text-green-400',
     PENDING: 'bg-yellow-500/20 text-yellow-400',
     CANCELLED: 'bg-red-500/20 text-red-400',
-    COMPLETED: 'bg-blue-500/20 text-blue-400',
+    FAILED: 'bg-gray-500/20 text-gray-400',
 };
+
+const STATUS_OPTIONS = [
+    { value: 'PAID', label: 'Đã thanh toán' },
+    { value: 'CANCELLED', label: 'Đã hủy' },
+    { value: 'FAILED', label: 'Thất bại' },
+    { value: 'PENDING', label: 'Đang chờ thanh toán' }
+];
+
+
 
 const BookingsPage = () => {
     const [bookings, setBookings] = useState([]);
@@ -51,6 +60,24 @@ const BookingsPage = () => {
             console.error(err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleUpdateStatus = async (bookingId, newStatus) => {
+        try {
+            await bookingApi.updateStatus(bookingId, newStatus);
+
+            // update UI ngay (không cần reload)
+            setBookings(prev =>
+                prev.map(b =>
+                    b.bookingId === bookingId
+                        ? { ...b, status: newStatus }
+                        : b
+                )
+            );
+        } catch (err) {
+            console.error(err);
+            alert('Cập nhật trạng thái thất bại!');
         }
     };
 
@@ -107,10 +134,10 @@ const BookingsPage = () => {
                             className="bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:ring-2 focus:ring-primary outline-none"
                         >
                             <option value="">Tất cả trạng thái</option>
-                            <option value="CONFIRMED">Đã xác nhận</option>
+                            <option value="PAID">Đã xác nhận</option>
                             <option value="PENDING">Chờ xử lý</option>
                             <option value="CANCELLED">Đã hủy</option>
-                            <option value="COMPLETED">Hoàn thành</option>
+                            <option value="FAIL">Thất bại</option>
                         </select>
                     </div>
 
@@ -141,7 +168,7 @@ const BookingsPage = () => {
                                                 <span className="text-primary font-mono font-bold text-sm">{booking.bookingCode}</span>
                                             </td>
                                             <td className="px-4 py-3">
-                                                <p className="text-white text-sm">{booking.user?.fullName || 'N/A'}</p>
+                                                <p className="text-white text-sm">{booking.userName || 'N/A'}</p>
                                                 <p className="text-slate-400 text-xs">{booking.user?.email}</p>
                                             </td>
                                             <td className="px-4 py-3 text-slate-300 text-sm">{booking.movieTitle || booking.showtime?.movie?.title}</td>
@@ -149,9 +176,17 @@ const BookingsPage = () => {
                                             <td className="px-4 py-3 text-center text-white font-medium">{booking.bookingDetails?.length || 0}</td>
                                             <td className="px-4 py-3 text-primary font-bold text-sm">{formatCurrency(booking.finalAmount)}</td>
                                             <td className="px-4 py-3">
-                                                <span className={`px-2 py-1 rounded-full text-xs font-bold ${STATUS_COLORS[booking.status] || 'bg-slate-500/20 text-slate-400'}`}>
-                                                    {booking.status}
-                                                </span>
+                                                <select
+                                                    value={booking.status}
+                                                    onChange={(e) => handleUpdateStatus(booking.bookingId, e.target.value)}
+                                                    className={`px-2 py-1 rounded-full text-xs font-bold bg-transparent border border-white/10 ${STATUS_COLORS[booking.status] || 'bg-slate-500/20 text-slate-400'}`}
+                                                >
+                                                    {STATUS_OPTIONS.map(opt => (
+                                                        <option key={opt.value} value={opt.value} className="bg-[#0b1220] text-white">
+                                                            {opt.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </td>
                                             <td className="px-4 py-3 text-right">
                                                 <button
@@ -192,7 +227,7 @@ const BookingsPage = () => {
                             <div className="space-y-3 text-sm">
                                 <div className="flex justify-between">
                                     <span className="text-slate-400">Khách hàng</span>
-                                    <span className="text-white font-medium">{viewBooking.user?.fullName}</span>
+                                    <span className="text-white font-medium">{viewBooking.userName}</span>
                                 </div>
                                 <div className="flex justify-between">
                                     <span className="text-slate-400">Email</span>

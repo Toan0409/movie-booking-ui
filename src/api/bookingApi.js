@@ -8,6 +8,9 @@ const bookingApi = {
     // Admin: get all bookings
     getAllBookings: () =>
         axiosClient.get('/admin/bookings'),
+
+    updateStatus: (bookingId, status) =>
+        axiosClient.patch(`/admin/bookings/${bookingId}/status`, { status }),
 };
 
 // Get bookings for a specific user (filter from admin endpoint)
