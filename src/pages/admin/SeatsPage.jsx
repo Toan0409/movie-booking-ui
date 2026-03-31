@@ -256,10 +256,14 @@ const SeatsPage = () => {
                                                                 ))}
                                                                 <div className="border-t border-white/10 mt-1 pt-1">
                                                                     <button
-                                                                        onClick={() => handleToggleSeat(seat)}
-                                                                        className={`w-full text-left px-2 py-1 text-xs rounded hover:bg-white/10 transition-colors ${seat.isActive ? 'text-red-400' : 'text-green-400'}`}
+                                                                        onClick={() => {
+                                                                            setSelectedSeat(seat);
+                                                                            setEditSeatType(seat.seatType);
+                                                                            setEditIsActive(seat.isActive);
+                                                                        }}
+                                                                        className={`w-8 h-8 rounded-t-lg text-[10px] font-medium border transition-all ${getSeatColor(seat)}`}
                                                                     >
-                                                                        {seat.isActive ? 'Vô hiệu hóa' : 'Kích hoạt'}
+                                                                        {seat.seatNumber}
                                                                     </button>
                                                                 </div>
                                                             </div>

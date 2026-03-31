@@ -42,7 +42,7 @@ const Dashboard = () => {
                         : (bookingsRes.value?.data?.data || []);
                     totalBookings = data.length;
                     totalRevenue = data
-                        .filter(b => b.status === 'CONFIRMED' || b.status === 'COMPLETED')
+                        .filter(b => b.status === 'PAID' || b.status === 'COMPLETED')
                         .reduce((sum, b) => sum + (b.finalAmount || 0), 0);
                 }
 
@@ -58,11 +58,12 @@ const Dashboard = () => {
                 // Movies
                 let totalMovies = 0;
                 if (moviesRes.status === 'fulfilled') {
-                    const mData = moviesRes.value?.data?.content || moviesRes.value?.data || [];
+                    const mData = moviesRes.value?.data.data.content || moviesRes.value?.data || [];
                     totalMovies = Array.isArray(mData)
                         ? mData.length
                         : (moviesRes.value?.data?.totalElements || 0);
                 }
+
 
                 setKpi({
                     revenue: totalRevenue,

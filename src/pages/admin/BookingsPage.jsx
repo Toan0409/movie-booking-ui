@@ -93,7 +93,7 @@ const BookingsPage = () => {
     };
 
     const totalRevenue = filtered
-        .filter(b => b.status === 'CONFIRMED' || b.status === 'COMPLETED')
+        .filter(b => b.status === 'PAID' || b.status === 'COMPLETED')
         .reduce((sum, b) => sum + (b.finalAmount || 0), 0);
 
     return (
@@ -106,7 +106,7 @@ const BookingsPage = () => {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {[
                             { label: 'Tổng đặt vé', value: filtered.length, color: 'text-white' },
-                            { label: 'Đã xác nhận', value: filtered.filter(b => b.status === 'CONFIRMED').length, color: 'text-green-400' },
+                            { label: 'Đã xác nhận', value: filtered.filter(b => b.status === 'PAID').length, color: 'text-green-400' },
                             { label: 'Đã hủy', value: filtered.filter(b => b.status === 'CANCELLED').length, color: 'text-red-400' },
                             { label: 'Doanh thu', value: formatCurrency(totalRevenue), color: 'text-primary' },
                         ].map(stat => (
