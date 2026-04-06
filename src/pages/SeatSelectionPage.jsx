@@ -108,8 +108,12 @@ const SeatSelectionPage = () => {
     const handleBooking = async () => {
         if (selectedSeats.length === 0) return;
 
-        // Get userId from localStorage (simple auth)
-        const userId = localStorage.getItem('userId') || 1;
+        // Lay userId tu localStorage (AuthContext luu khi login)
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            navigate('/login', { state: { from: `/booking/${showtimeId}` } });
+            return;
+        }
 
         try {
             setBooking(true);
@@ -119,11 +123,12 @@ const SeatSelectionPage = () => {
                 notes: '',
             };
 
+            // Buoc 1: Tao booking (trang thai PENDING)
             const response = await bookingApi.createBooking(userId, bookingData);
             const bookingResult = response.data;
 
-            // Navigate to success page with booking info
-            navigate('/booking/success', {
+            // Buoc 2: Chuyen sang trang thanh toan VNPAY
+            navigate('/payment', {
                 state: {
                     booking: bookingResult,
                     showtime,

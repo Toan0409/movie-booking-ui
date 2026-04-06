@@ -9,6 +9,8 @@ import MovieDetailPage from '../pages/MovieDetailPage';
 import ShowtimePage from '../pages/ShowtimePage';
 import SeatSelectionPage from '../pages/SeatSelectionPage';
 import BookingSuccessPage from '../pages/BookingSuccessPage';
+import PaymentPage from '../pages/PaymentPage';
+import PaymentResultPage from '../pages/PaymentResultPage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import ProfilePage from '../pages/ProfilePage';
@@ -39,6 +41,8 @@ const AppRoutes = () => {
                 <Route path="/showtimes/:id" element={<ShowtimePage />} />
                 <Route path="/booking/success" element={<BookingSuccessPage />} />
                 <Route path="/booking/:id" element={<SeatSelectionPage />} />
+                <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/payment/result" element={<PaymentResultPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
