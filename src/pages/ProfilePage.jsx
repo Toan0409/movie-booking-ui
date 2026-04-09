@@ -11,7 +11,6 @@ import bookingApi from '../api/bookingApi';
 
 const MENU_ITEMS = [
     { key: 'info', label: 'Thông tin tài khoản', icon: User },
-    { key: 'tickets', label: 'Vé của tôi', icon: Ticket },
     { key: 'history', label: 'Lịch sử đặt vé', icon: History },
     { key: 'settings', label: 'Cài đặt', icon: Settings },
 ];
@@ -29,10 +28,26 @@ const formatCurrency = (amount) =>
     new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
 
 const STATUS_MAP = {
-    CONFIRMED: { label: 'Đã xác nhận', color: 'text-green-400 bg-green-500/10 border-green-500/20', icon: CheckCircle },
-    PENDING: { label: 'Chờ xác nhận', color: 'text-amber-400 bg-amber-500/10 border-amber-500/20', icon: Clock },
-    CANCELLED: { label: 'Đã hủy', color: 'text-red-400 bg-red-500/10 border-red-500/20', icon: XCircle },
-    COMPLETED: { label: 'Hoàn thành', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20', icon: CheckCircle },
+    PAID: {
+        label: 'Đã thanh toán',
+        color: 'text-green-400 bg-green-500/10 border-green-500/20',
+        icon: CheckCircle
+    },
+    PENDING: {
+        label: 'Chờ thanh toán',
+        color: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+        icon: Clock
+    },
+    CANCELLED: {
+        label: 'Đã hủy',
+        color: 'text-red-400 bg-red-500/10 border-red-500/20',
+        icon: XCircle
+    },
+    FAILED: {
+        label: 'Thanh toán thất bại',
+        color: 'text-gray-400 bg-gray-500/10 border-gray-500/20',
+        icon: XCircle
+    }
 };
 
 const ProfilePage = () => {
@@ -108,11 +123,16 @@ const ProfilePage = () => {
     const now = new Date();
     const upcomingBookings = bookings.filter(b => {
         const st = b.showtime?.startTime || b.startTime;
-        return st && new Date(st) > now && b.status !== 'CANCELLED';
+        return st && new Date(st) > now && b.status !== 'PAID';
     });
     const pastBookings = bookings.filter(b => {
         const st = b.showtime?.startTime || b.startTime;
-        return !st || new Date(st) <= now || b.status === 'CANCELLED';
+        return (
+            !st ||
+            new Date(st) <= now ||
+            b.status === 'CANCELLED' ||
+            b.status === 'FAILED'
+        );
     });
 
     const BookingCard = ({ booking }) => {
@@ -327,34 +347,6 @@ const ProfilePage = () => {
                             </div>
                         )}
 
-                        {/* ── Tickets Tab (upcoming) ── */}
-                        {activeTab === 'tickets' && (
-                            <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-                                <h3 className="text-white font-bold text-lg mb-4">Vé của tôi</h3>
-                                {bookingsLoading ? (
-                                    <div className="space-y-3">
-                                        {[...Array(3)].map((_, i) => (
-                                            <div key={i} className="h-24 bg-white/5 rounded-xl animate-pulse"></div>
-                                        ))}
-                                    </div>
-                                ) : upcomingBookings.length > 0 ? (
-                                    <div className="space-y-3">
-                                        {upcomingBookings.map((b, i) => (
-                                            <BookingCard key={b.bookingId || i} booking={b} />
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className="text-center py-12">
-                                        <Ticket className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                                        <p className="text-slate-400 mb-4">Bạn chưa có vé nào sắp tới</p>
-                                        <Link to="/movies/now-showing" className="bg-primary text-white font-bold py-2 px-6 rounded-lg hover:bg-primary/90 transition-all">
-                                            Đặt vé ngay
-                                        </Link>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-
                         {/* ── History Tab ── */}
                         {activeTab === 'history' && (
                             <div className="bg-white/5 border border-white/10 rounded-xl p-6">
@@ -367,7 +359,7 @@ const ProfilePage = () => {
                                     </div>
                                 ) : bookings.length > 0 ? (
                                     <div className="space-y-3">
-                                        {bookings.map((b, i) => (
+                                        {pastBookings.map((b, i) => (
                                             <BookingCard key={b.bookingId || i} booking={b} />
                                         ))}
                                     </div>

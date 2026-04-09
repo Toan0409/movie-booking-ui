@@ -5,6 +5,7 @@ const bookingApi = {
     createBooking: (userId, data) =>
         axiosClient.post('/bookings', data, { params: { userId } }),
 
+
     // Admin: get all bookings
     getAllBookings: () =>
         axiosClient.get('/admin/bookings'),
@@ -15,7 +16,7 @@ const bookingApi = {
 
 // Get bookings for a specific user (filter from admin endpoint)
 bookingApi.getBookingsByUser = async (userId) => {
-    const res = await axiosClient.get('/admin/bookings');
+    const res = await axiosClient.get('/bookings/my-bookings', { params: { userId } });
     const allBookings = res.data?.data || res.data || [];
     const bookings = Array.isArray(allBookings)
         ? allBookings.filter(
