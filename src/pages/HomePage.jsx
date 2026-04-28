@@ -8,7 +8,6 @@ import cinemaApi from '../api/cinemaApi';
 const HomePage = () => {
   const { movies: nowShowingMovies, loading: nowShowingLoading, error: nowShowingError } = useNowShowing();
   const { movies: comingSoonMovies, loading: comingSoonLoading } = useComingSoon();
-  const { movies: featuredMovies, loading: featuredLoading } = useFeaturedMovies();
 
   const [cinemas, setCinemas] = useState([]);
   const [cinemasLoading, setCinemasLoading] = useState(true);
@@ -27,14 +26,14 @@ const HomePage = () => {
 
   // Auto-rotate hero
   useEffect(() => {
-    if (!featuredMovies || featuredMovies.length <= 1) return;
+    if (!nowShowingMovies || nowShowingMovies.length <= 1) return;
     const timer = setInterval(() => {
-      setHeroIndex(i => (i + 1) % featuredMovies.length);
+      setHeroIndex(i => (i + 1) % nowShowingMovies.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, [featuredMovies]);
+  }, [nowShowingMovies]);
 
-  const featuredMovie = featuredMovies?.[heroIndex] || null;
+  const featuredMovie = nowShowingMovies?.[heroIndex] || null;
   const heroTitle = featuredMovie?.title || 'CinemaBooking';
   const heroDescription = featuredMovie?.description || 'Trải nghiệm điện ảnh đỉnh cao với hệ thống đặt vé trực tuyến tiện lợi nhất.';
   const heroImage = featuredMovie?.backdropUrl || featuredMovie?.backgroundUrl || featuredMovie?.posterUrl || '';
@@ -122,16 +121,16 @@ const HomePage = () => {
         </div>
 
         {/* Hero navigation dots */}
-        {featuredMovies && featuredMovies.length > 1 && (
+        {nowShowingMovies && nowShowingMovies.length > 1 && (
           <div className="absolute bottom-6 right-20 z-20 flex items-center gap-3">
             <button
-              onClick={() => setHeroIndex(i => (i - 1 + featuredMovies.length) % featuredMovies.length)}
+              onClick={() => setHeroIndex(i => (i - 1 + nowShowingMovies.length) % nowShowingMovies.length)}
               className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 text-white transition-all"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div className="flex gap-1.5">
-              {featuredMovies.map((_, i) => (
+              {nowShowingMovies.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setHeroIndex(i)}
@@ -140,7 +139,7 @@ const HomePage = () => {
               ))}
             </div>
             <button
-              onClick={() => setHeroIndex(i => (i + 1) % featuredMovies.length)}
+              onClick={() => setHeroIndex(i => (i + 1) % nowShowingMovies.length)}
               className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 text-white transition-all"
             >
               <ChevronRight className="w-5 h-5" />
