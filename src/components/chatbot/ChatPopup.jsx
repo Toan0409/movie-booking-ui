@@ -1,39 +1,39 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import chatbotApi from '../../api/chatbotApi';
 import MessageBubble from './MessageBubble';
 
 const ChatPopup = ({ isOpen, onClose }) => {
+    const { user } = useAuth();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
 
-    // Load history from localStorage
+    // Show welcome or login prompt on open
     useEffect(() => {
         if (isOpen) {
-            const saved = localStorage.getItem('chatbot-history');
-            if (saved) {
-                setMessages(JSON.parse(saved));
-            } else {
-                // Welcome message
+            if (user) {
                 setMessages([{
                     type: 'bot',
-                    text: 'Xin chào! 🎬 Tôi là Movie Assistant. Hỏi tôi về:\n• Gợi ý phim hành động\n• Phim tình cảm Hàn Quốc\n• Phim hot đang chiếu\n• Phim gia đình...',
+                    text: 'Chào bạn! 🎬 Tôi là Movie Assistant. Hỏi tôi về:\n• Gợi ý phim hành động\n• Phim tình cảm\n• Phim hot đang chiếu\n• Top phim...',
+                    movies: [],
+                    createdAt: new Date().toISOString()
+                }]);
+            } else {
+                setMessages([{
+                    type: 'bot',
+                    text: '🔐 Vui lòng đăng nhập để sử dụng chatbot.',
                     movies: [],
                     createdAt: new Date().toISOString()
                 }]);
             }
             inputRef.current?.focus();
         }
-    }, [isOpen]);
+    }, [isOpen, user]);
 
-    // Auto-save to localStorage
-    useEffect(() => {
-        if (messages.length > 0) {
-            localStorage.setItem('chatbot-history', JSON.stringify(messages.slice(-50))); // Giữ 50 tin gần nhất
-        }
-    }, [messages]);
+    // No localStorage - use backend history
 
     // Auto-scroll
     const scrollToBottom = useCallback(() => {
@@ -44,7 +44,11 @@ const ChatPopup = ({ isOpen, onClose }) => {
         scrollToBottom();
     }, [messages, loading, scrollToBottom]);
 
+    // Remove loadHistory - history loads with first response
+
     const sendMessage = async () => {
+        if (!user) return; // Auth check
+
         const text = input.trim();
         if (!text || loading) return;
 
@@ -68,9 +72,16 @@ const ChatPopup = ({ isOpen, onClose }) => {
             };
             setMessages(prev => [...prev, botMessage]);
         } catch (error) {
+            let errorText = '🤖 Có lỗi xảy ra. Vui lòng thử lại.';
+            if (error.message.includes('đăng nhập')) {
+                errorText = '🔐 Vui lòng đăng nhập lại để tiếp tục chat.';
+            } else if (error.message.includes('quyền')) {
+                errorText = '❌ Không có quyền truy cập chatbot.';
+            }
+
             const errorMessage = {
                 type: 'bot',
-                text: '🤖 Ối! Có lỗi kết nối. Kiểm tra backend localhost:8080 nhé! Hoặc thử lại sau.',
+                text: errorText,
                 movies: [],
                 createdAt: new Date().toISOString()
             };
@@ -81,12 +92,21 @@ const ChatPopup = ({ isOpen, onClose }) => {
     };
 
     const clearChat = () => {
-        setMessages([{
-            type: 'bot',
-            text: 'Đã làm mới chat! 🎬 Hỏi tôi phim gì nào?',
-            movies: [],
-            createdAt: new Date().toISOString()
-        }]);
+        if (user) {
+            setMessages([{
+                type: 'bot',
+                text: 'Đã làm mới chat! 🎬 Hỏi tôi phim gì nào?',
+                movies: [],
+                createdAt: new Date().toISOString()
+            }]);
+        } else {
+            setMessages([{
+                type: 'bot',
+                text: '🔐 Vui lòng đăng nhập để sử dụng chatbot.',
+                movies: [],
+                createdAt: new Date().toISOString()
+            }]);
+        }
     };
 
     const handleKeyPress = (e) => {
@@ -126,15 +146,21 @@ const ChatPopup = ({ isOpen, onClose }) => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <button
-                            onClick={clearChat}
-                            className="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-105"
-                            title="Làm mới chat"
-                        >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                        </button>
+                        {user ? (
+                            <button
+                                onClick={clearChat}
+                                className="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-105"
+                                title="Làm mới chat"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                            </button>
+                        ) : (
+                            <div className="px-3 py-1 bg-yellow-500/20 border border-yellow-500/50 rounded-lg text-xs font-medium text-yellow-100">
+                                Đăng nhập
+                            </div>
+                        )}
                         <button
                             onClick={onClose}
                             className="p-2 hover:bg-white/10 rounded-xl transition-all duration-200 hover:scale-105"
@@ -181,9 +207,9 @@ const ChatPopup = ({ isOpen, onClose }) => {
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyPress={handleKeyPress}
-                            placeholder="Nhập câu hỏi về phim... (Enter để gửi)"
+                            placeholder={user ? "Nhập câu hỏi về phim... (Enter để gửi)" : "🔐 Đăng nhập để chat..."}
                             className="flex-1 max-h-24 resize-none rounded-2xl px-4 py-3 bg-white/10 border border-white/15 outline-none focus:border-red-500/70 focus:bg-white/15 placeholder:text-slate-400 text-sm leading-relaxed transition-all duration-200"
-                            disabled={loading}
+                            disabled={loading || !user}
                             rows={1}
                         />
                         <button

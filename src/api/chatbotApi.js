@@ -7,15 +7,28 @@ const chatbotApi = {
                 message: message.trim()
             });
 
-            // Handle both task format {reply} and existing page {data: {message}}
-            const reply = response.data.reply || response.data.data?.message || response.data.message || 'Xin lỗi, tôi chưa hiểu câu hỏi của bạn.';
+            // Parse Spring Boot ApiResponse<ChatResponseDTO>
+            const data = response.data.data;
+            if (!data) {
+                throw new Error('Invalid response format from backend');
+            }
 
             return {
-                reply,
-                movies: response.data.data?.movies || [] // Compatible with ChatbotPage
+                reply: data.message || 'Xin lỗi, tôi chưa hiểu câu hỏi của bạn.',
+                movies: data.movies || [],
+                history: data.history || []
             };
         } catch (error) {
             console.error('Chatbot API error:', error);
+
+            // Handle specific HTTP errors
+            if (error.response?.status === 401) {
+                throw new Error('Vui lòng đăng nhập để sử dụng chatbot');
+            }
+            if (error.response?.status === 403) {
+                throw new Error('Không có quyền truy cập chatbot');
+            }
+
             throw new Error('Không thể kết nối chatbot. Vui lòng thử lại.');
         }
     }
